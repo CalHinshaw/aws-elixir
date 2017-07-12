@@ -44,7 +44,7 @@ defmodule AWS.Discovery do
 
   </li> </ul> Application Discovery Service integrates with application
   discovery solutions from AWS Partner Network (APN) partners. Third-party
-  application discovery tools can query the Application Discovery Service and
+  application discovery tools can query Application Discovery Service and
   write to the Application Discovery Service database using a public API. You
   can then import the data into either a visualization tool or
   cloud-migration solution.
@@ -57,17 +57,17 @@ defmodule AWS.Discovery do
 
   </important> Your AWS account must be granted access to Application
   Discovery Service, a process called *whitelisting*. This is true for AWS
-  partners and customers alike. To request access, sign up for the AWS
+  partners and customers alike. To request access, sign up for AWS
   Application Discovery Service
-  [here](http://aws.amazon.com/application-discovery/preview/). We will send
-  you information about how to get started.
+  [here](http://aws.amazon.com/application-discovery/preview/). We send you
+  information about how to get started.
 
   This API reference provides descriptions, syntax, and usage examples for
-  each of the actions and data types for the Application Discovery Service.
-  The topic for each action shows the API request parameters and the
-  response. Alternatively, you can use one of the AWS SDKs to access an API
-  that is tailored to the programming language or platform that you're using.
-  For more information, see [AWS SDKs](http://aws.amazon.com/tools/#SDKs).
+  each of the actions and data types for Application Discovery Service. The
+  topic for each action shows the API request parameters and the response.
+  Alternatively, you can use one of the AWS SDKs to access an API that is
+  tailored to the programming language or platform that you're using. For
+  more information, see [AWS SDKs](http://aws.amazon.com/tools/#SDKs).
 
   This guide is intended for use with the [ *AWS Application Discovery
   Service User Guide*
@@ -129,20 +129,30 @@ defmodule AWS.Discovery do
   attributes about the server, such as host name, operating system, and
   number of network cards.
 
-  For a complete list of outputs for each asset type, see [Querying
-  Discovered Configuration
-  Items](http://docs.aws.amazon.com/application-discovery/latest/APIReference/querying-configuration-items.html#DescribeConfigurations).
+  For a complete list of outputs for each asset type, see [Using the
+  DescribeConfigurations
+  Action](http://docs.aws.amazon.com/application-discovery/latest/APIReference/discovery-api-queries.html#DescribeConfigurations).
   """
   def describe_configurations(client, input, options \\ []) do
     request(client, "DescribeConfigurations", input, options)
   end
 
   @doc """
+  Deprecated. Use `DescribeExportTasks` instead.
+
   Retrieves the status of a given export process. You can retrieve status
   from a maximum of 100 processes.
   """
   def describe_export_configurations(client, input, options \\ []) do
     request(client, "DescribeExportConfigurations", input, options)
+  end
+
+  @doc """
+  Retrieve status of one or more export tasks. You can retrieve the status of
+  up to 100 export tasks.
+  """
+  def describe_export_tasks(client, input, options \\ []) do
+    request(client, "DescribeExportTasks", input, options)
   end
 
   @doc """
@@ -162,10 +172,12 @@ defmodule AWS.Discovery do
   end
 
   @doc """
+  Deprecated. Use `StartExportTask` instead.
+
   Exports all discovered configuration data to an Amazon S3 bucket or an
   application that enables you to view and evaluate the data. Data includes
   tags and tag associations, processes, connections, servers, and system
-  performance. This API returns an export ID which you can query using the
+  performance. This API returns an export ID that you can query using the
   *DescribeExportConfigurations* API. The system imposes a limit of two
   configuration exports in six hours.
   """
@@ -181,15 +193,16 @@ defmodule AWS.Discovery do
   end
 
   @doc """
-  Retrieves a list of configuration items according to criteria you specify
-  in a filter. The filter criteria identify relationship requirements.
+  Retrieves a list of configuration items according to criteria that you
+  specify in a filter. The filter criteria identifies the relationship
+  requirements.
   """
   def list_configurations(client, input, options \\ []) do
     request(client, "ListConfigurations", input, options)
   end
 
   @doc """
-  Retrieves a list of servers which are one network hop away from a specified
+  Retrieves a list of servers that are one network hop away from a specified
   server.
   """
   def list_server_neighbors(client, input, options \\ []) do
@@ -197,14 +210,22 @@ defmodule AWS.Discovery do
   end
 
   @doc """
-  Instructs the specified agents or Connectors to start collecting data.
+  Instructs the specified agents or connectors to start collecting data.
   """
   def start_data_collection_by_agent_ids(client, input, options \\ []) do
     request(client, "StartDataCollectionByAgentIds", input, options)
   end
 
   @doc """
-  Instructs the specified agents or Connectors to stop collecting data.
+  Export the configuration data about discovered configuration items and
+  relationships to an S3 bucket in a specified format.
+  """
+  def start_export_task(client, input, options \\ []) do
+    request(client, "StartExportTask", input, options)
+  end
+
+  @doc """
+  Instructs the specified agents or connectors to stop collecting data.
   """
   def stop_data_collection_by_agent_ids(client, input, options \\ []) do
     request(client, "StopDataCollectionByAgentIds", input, options)

@@ -47,10 +47,10 @@ defmodule AWS.Kinesis do
   You receive a `LimitExceededException` when making a `CreateStream` request
   if you try to do one of the following:
 
-  <ul> <li>Have more than five streams in the `CREATING` state at any point
+  <ul> <li> Have more than five streams in the `CREATING` state at any point
   in time.
 
-  </li> <li>Create more shards than are authorized for your account.
+  </li> <li> Create more shards than are authorized for your account.
 
   </li> </ul> For the default shard limit for an AWS account, see [Streams
   Limits](http://docs.aws.amazon.com/kinesis/latest/dev/service-sizes-and-limits.html)
@@ -402,8 +402,9 @@ defmodule AWS.Kinesis do
   provisioned throughput on the shard involved in the request, `PutRecord`
   throws `ProvisionedThroughputExceededException`.
 
-  Data records are accessible for only 24 hours from the time that they are
-  added to a stream.
+  By default, data records are accessible for 24 hours from the time that
+  they are added to a stream. You can use `IncreaseStreamRetentionPeriod` or
+  `DecreaseStreamRetentionPeriod` to modify this retention period.
   """
   def put_record(client, input, options \\ []) do
     request(client, "PutRecord", input, options)
@@ -472,10 +473,9 @@ defmodule AWS.Kinesis do
   PutRecords](http://docs.aws.amazon.com/kinesis/latest/dev/kinesis-using-sdk-java-add-data-to-stream.html#kinesis-using-sdk-java-putrecords)
   in the *Amazon Kinesis Streams Developer Guide*.
 
-  By default, data records are accessible for only 24 hours from the time
-  that they are added to an Amazon Kinesis stream. This retention period can
-  be modified using the `DecreaseStreamRetentionPeriod` and
-  `IncreaseStreamRetentionPeriod` operations.
+  By default, data records are accessible for 24 hours from the time that
+  they are added to a stream. You can use `IncreaseStreamRetentionPeriod` or
+  `DecreaseStreamRetentionPeriod` to modify this retention period.
   """
   def put_records(client, input, options \\ []) do
     request(client, "PutRecords", input, options)
@@ -549,6 +549,56 @@ defmodule AWS.Kinesis do
   end
 
   @doc """
+  Enables or updates server-side encryption using an AWS KMS key for a
+  specified stream.
+
+  Starting encryption is an asynchronous operation. Upon receiving the
+  request, Amazon Kinesis returns immediately and sets the status of the
+  stream to `UPDATING`. After the update is complete, Amazon Kinesis sets the
+  status of the stream back to `ACTIVE`. Updating or applying encryption
+  normally takes a few seconds to complete but it can take minutes. You can
+  continue to read and write data to your stream while its status is
+  `UPDATING`. Once the status of the stream is `ACTIVE`, records written to
+  the stream will begin to be encrypted.
+
+  API Limits: You can successfully apply a new AWS KMS key for server-side
+  encryption 25 times in a rolling 24 hour period.
+
+  Note: It can take up to 5 seconds after the stream is in an `ACTIVE` status
+  before all records written to the stream are encrypted. After you’ve
+  enabled encryption, you can verify encryption was applied by inspecting the
+  API response from `PutRecord` or `PutRecords`.
+  """
+  def start_stream_encryption(client, input, options \\ []) do
+    request(client, "StartStreamEncryption", input, options)
+  end
+
+  @doc """
+  Disables server-side encryption for a specified stream.
+
+  Stopping encryption is an asynchronous operation. Upon receiving the
+  request, Amazon Kinesis returns immediately and sets the status of the
+  stream to `UPDATING`. After the update is complete, Amazon Kinesis sets the
+  status of the stream back to `ACTIVE`. Stopping encryption normally takes a
+  few seconds to complete but it can take minutes. You can continue to read
+  and write data to your stream while its status is `UPDATING`. Once the
+  status of the stream is `ACTIVE` records written to the stream will no
+  longer be encrypted by the Amazon Kinesis Streams service.
+
+  API Limits: You can successfully disable server-side encryption 25 times in
+  a rolling 24 hour period.
+
+  Note: It can take up to 5 seconds after the stream is in an `ACTIVE` status
+  before all records written to the stream are no longer subject to
+  encryption. After you’ve disabled encryption, you can verify encryption was
+  not applied by inspecting the API response from `PutRecord` or
+  `PutRecords`.
+  """
+  def stop_stream_encryption(client, input, options \\ []) do
+    request(client, "StopStreamEncryption", input, options)
+  end
+
+  @doc """
   Updates the shard count of the specified stream to the specified number of
   shards.
 
@@ -559,16 +609,29 @@ defmodule AWS.Kinesis do
   the scaling action could take a few minutes to complete. You can continue
   to read and write data to your stream while its status is `UPDATING`.
 
-  To update the shard count, Amazon Kinesis performs splits and merges and
+  To update the shard count, Amazon Kinesis performs splits or merges on
   individual shards. This can cause short-lived shards to be created, in
   addition to the final shards. We recommend that you double or halve the
   shard count, as this results in the fewest number of splits or merges.
 
-  This operation has a rate limit of twice per rolling 24 hour period. You
-  cannot scale above double your current shard count, scale below half your
-  current shard count, or exceed the shard limits for your account.
+  This operation has the following limits, which are per region per account
+  unless otherwise noted:
 
-  For the default limits for an AWS account, see [Streams
+  <ul> <li> scale more than twice per rolling 24 hour period
+
+  </li> <li> scale up above double your current shard count
+
+  </li> <li> scale down below half your current shard count
+
+  </li> <li> scale up above 200 shards in a stream
+
+  </li> <li> scale a stream with more than 200 shards down unless the result
+  is less than 200 shards
+
+  </li> <li> scale up above the shard limits for your account
+
+  </li> <li> <p/> </li> </ul> For the default limits for an AWS account, see
+  [Streams
   Limits](http://docs.aws.amazon.com/kinesis/latest/dev/service-sizes-and-limits.html)
   in the *Amazon Kinesis Streams Developer Guide*. If you need to increase a
   limit, [contact AWS

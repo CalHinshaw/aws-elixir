@@ -67,7 +67,7 @@ defmodule AWS.Organizations do
   **Support and Feedback for AWS Organizations**
 
   We welcome your feedback. Send your comments to
-  [aws-organizations-feedback@amazon.com](mailto:aws-organizations-feedback@amazon.com)
+  [feedback-awsorganizations@amazon.com](mailto:feedback-awsorganizations@amazon.com)
   or post your feedback and questions in our private [AWS Organizations
   support forum](http://forums.aws.amazon.com/forum.jspa?forumID=219). If you
   don't have access to the forum, send a request for access to the email
@@ -148,7 +148,8 @@ defmodule AWS.Organizations do
   Organization](http://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_org_support-all-features.html)
   in the *AWS Organizations User Guide*.
 
-  </li> </ul>
+  </li> </ul> After you accept a handshake, it continues to appear in the
+  results of relevant APIs for only 30 days. After that it is deleted.
   """
   def accept_handshake(client, input, options \\ []) do
     request(client, "AcceptHandshake", input, options)
@@ -211,6 +212,9 @@ defmodule AWS.Organizations do
   handshake. The recipient of the handshake can't cancel it, but can use
   `DeclineHandshake` instead. After a handshake is canceled, the recipient
   can no longer respond to that handshake.
+
+  After you cancel a handshake, it continues to appear in the results of
+  relevant APIs for only 30 days. After that it is deleted.
   """
   def cancel_handshake(client, input, options \\ []) do
     request(client, "CancelHandshake", input, options)
@@ -240,12 +244,12 @@ defmodule AWS.Organizations do
   organization that contains an account that is created with this operation.
 
   </important> <note> When you create a member account with this operation,
-  the account is created with the **IAM User and Role Access to Billing
-  Information** switch enabled. This allows IAM users and roles that are
-  granted appropriate permissions to view billing information. If this is
-  disabled, then only the account root user can access billing information.
-  For information about how to disable this for an account, see [Granting
-  Access to Your Billing Information and
+  you can choose whether to create the account with the **IAM User and Role
+  Access to Billing Information** switch enabled. If you enable it, IAM users
+  and roles that have appropriate permissions can view billing information
+  for the account. If you disable this, then only the account root user can
+  access billing information. For information about how to disable this for
+  an account, see [Granting Access to Your Billing Information and
   Tools](http://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/grantaccess.html).
 
   </note> This operation can be called only from the organization's master
@@ -316,6 +320,9 @@ defmodule AWS.Organizations do
   handshake. The originator of the handshake can use `CancelHandshake`
   instead. The originator can't reactivate a declined request, but can
   re-initiate the process with a new handshake request.
+
+  After you decline a handshake, it continues to appear in the results of
+  relevant APIs for only 30 days. After that it is deleted.
   """
   def decline_handshake(client, input, options \\ []) do
     request(client, "DeclineHandshake", input, options)
@@ -380,6 +387,10 @@ defmodule AWS.Organizations do
   Retrieves information about a previously requested handshake. The handshake
   ID comes from the response to the original `InviteAccountToOrganization`
   operation that generated the handshake.
+
+  You can access handshakes that are ACCEPTED, DECLINED, or CANCELED for only
+  30 days after they change to that state. They are then deleted and no
+  longer accessible.
 
   This operation can be called from any account in the organization.
   """
@@ -503,7 +514,16 @@ defmodule AWS.Organizations do
   address that is associated with the other account's owner. The invitation
   is implemented as a `Handshake` whose details are in the response.
 
-  This operation can be called only from the organization's master account.
+  <important> You can invite AWS accounts only from the same reseller as the
+  master account. For example, if your organization's master account was
+  created by Amazon Internet Services Pvt. Ltd (AISPL), an AWS reseller in
+  India, then you can only invite other AISPL accounts to your organization.
+  You can't combine accounts from AISPL and AWS. For more information, see
+  [Consolidated Billing in
+  India](http://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/useconsolidatedbilliing-India.html).
+
+  </important> This operation can be called only from the organization's
+  master account.
   """
   def invite_account_to_organization(client, input, options \\ []) do
     request(client, "InviteAccountToOrganization", input, options)
@@ -518,12 +538,22 @@ defmodule AWS.Organizations do
   This operation can be called only from a member account in the
   organization.
 
-  <important> The master account in an organization with all features enabled
-  can set service control policies (SCPs) that can restrict what
-  administrators of member accounts can do, including preventing them from
-  successfully calling `LeaveOrganization` and leaving the organization.
+  <important> <ul> <li> The master account in an organization with all
+  features enabled can set service control policies (SCPs) that can restrict
+  what administrators of member accounts can do, including preventing them
+  from successfully calling `LeaveOrganization` and leaving the organization.
 
-  </important>
+  </li> <li> If you created the account using the AWS Organizations console,
+  the Organizations API, or the Organizations CLI commands, then you cannot
+  remove the account.
+
+  </li> <li> You can leave an organization only after you enable IAM user
+  access to billing in your account. For more information, see [Activating
+  Access to the Billing and Cost Management
+  Console](http://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/grantaccess.html#ControllingAccessWebsite-Activate)
+  in the *AWS Billing and Cost Management User Guide*.
+
+  </li> </ul> </important>
   """
   def leave_organization(client, input, options \\ []) do
     request(client, "LeaveOrganization", input, options)
@@ -574,6 +604,10 @@ defmodule AWS.Organizations do
   Lists the current handshakes that are associated with the account of the
   requesting user.
 
+  Handshakes that are ACCEPTED, DECLINED, or CANCELED appear in the results
+  of this API for only 30 days after changing to that state. After that they
+  are deleted and no longer accessible.
+
   This operation can be called from any account in the organization.
   """
   def list_handshakes_for_account(client, input, options \\ []) do
@@ -585,6 +619,10 @@ defmodule AWS.Organizations do
   requesting user is part of. The `ListHandshakesForOrganization` operation
   returns a list of handshake structures. Each structure contains details and
   status about a handshake.
+
+  Handshakes that are ACCEPTED, DECLINED, or CANCELED appear in the results
+  of this API for only 30 days after changing to that state. After that they
+  are deleted and no longer accessible.
 
   This operation can be called only from the organization's master account.
   """
@@ -679,11 +717,18 @@ defmodule AWS.Organizations do
   This operation can be called only from the organization's master account.
   Member accounts can remove themselves with `LeaveOrganization` instead.
 
-  <important> You can remove only existing accounts that were invited to join
-  the organization. You cannot remove accounts that were created by AWS
-  Organizations.
+  <important> <ul> <li> You can remove only accounts that were created
+  outside your organization and invited to join. If you created the account
+  using the AWS Organizations console, the Organizations API, or the
+  Organizations CLI commands, then you cannot remove the account.
 
-  </important>
+  </li> <li> You can remove a member account only after you enable IAM user
+  access to billing in the member account. For more information, see
+  [Activating Access to the Billing and Cost Management
+  Console](http://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/grantaccess.html#ControllingAccessWebsite-Activate)
+  in the *AWS Billing and Cost Management User Guide*.
+
+  </li> </ul> </important>
   """
   def remove_account_from_organization(client, input, options \\ []) do
     request(client, "RemoveAccountFromOrganization", input, options)

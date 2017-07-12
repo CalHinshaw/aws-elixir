@@ -129,6 +129,14 @@ defmodule AWS.Inspector do
   end
 
   @doc """
+  Produces an assessment report that includes detailed and comprehensive
+  results of a specified assessment run.
+  """
+  def get_assessment_report(client, input, options \\ []) do
+    request(client, "GetAssessmentReport", input, options)
+  end
+
+  @doc """
   Information about the data that is collected for the specified assessment
   run.
   """

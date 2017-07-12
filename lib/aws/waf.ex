@@ -73,6 +73,78 @@ defmodule AWS.WAF do
   end
 
   @doc """
+  Creates a `RateBasedRule`. The `RateBasedRule` contains a `RateLimit`,
+  which specifies the maximum number of requests that AWS WAF allows from a
+  specified IP address in a five-minute period. The `RateBasedRule` also
+  contains the `IPSet` objects, `ByteMatchSet` objects, and other predicates
+  that identify the requests that you want to count or block if these
+  requests exceed the `RateLimit`.
+
+  If you add more than one predicate to a `RateBasedRule`, a request not only
+  must exceed the `RateLimit`, but it also must match all the specifications
+  to be counted or blocked. For example, suppose you add the following to a
+  `RateBasedRule`:
+
+  <ul> <li> An `IPSet` that matches the IP address `192.0.2.44/32`
+
+  </li> <li> A `ByteMatchSet` that matches `BadBot` in the `User-Agent`
+  header
+
+  </li> </ul> Further, you specify a `RateLimit` of 15,000.
+
+  You then add the `RateBasedRule` to a `WebACL` and specify that you want to
+  block requests that meet the conditions in the rule. For a request to be
+  blocked, it must come from the IP address 192.0.2.44 *and* the `User-Agent`
+  header in the request must contain the value `BadBot`. Further, requests
+  that match these two conditions must be received at a rate of more than
+  15,000 requests every five minutes. If both conditions are met and the rate
+  is exceeded, AWS WAF blocks the requests. If the rate drops below 15,000
+  for a five-minute period, AWS WAF no longer blocks the requests.
+
+  As a second example, suppose you want to limit requests to a particular
+  page on your site. To do this, you could add the following to a
+  `RateBasedRule`:
+
+  <ul> <li> A `ByteMatchSet` with `FieldToMatch` of `URI`
+
+  </li> <li> A `PositionalConstraint` of `STARTS_WITH`
+
+  </li> <li> A `TargetString` of `login`
+
+  </li> </ul> Further, you specify a `RateLimit` of 15,000.
+
+  By adding this `RateBasedRule` to a `WebACL`, you could limit requests to
+  your login page without affecting the rest of your site.
+
+  To create and configure a `RateBasedRule`, perform the following steps:
+
+  <ol> <li> Create and update the predicates that you want to include in the
+  rule. For more information, see `CreateByteMatchSet`, `CreateIPSet`, and
+  `CreateSqlInjectionMatchSet`.
+
+  </li> <li> Use `GetChangeToken` to get the change token that you provide in
+  the `ChangeToken` parameter of a `CreateRule` request.
+
+  </li> <li> Submit a `CreateRateBasedRule` request.
+
+  </li> <li> Use `GetChangeToken` to get the change token that you provide in
+  the `ChangeToken` parameter of an `UpdateRule` request.
+
+  </li> <li> Submit an `UpdateRateBasedRule` request to specify the
+  predicates that you want to include in the rule.
+
+  </li> <li> Create and update a `WebACL` that contains the `RateBasedRule`.
+  For more information, see `CreateWebACL`.
+
+  </li> </ol> For more information about how to use the AWS WAF API to allow
+  or block HTTP requests, see the [AWS WAF Developer
+  Guide](http://docs.aws.amazon.com/waf/latest/developerguide/).
+  """
+  def create_rate_based_rule(client, input, options \\ []) do
+    request(client, "CreateRateBasedRule", input, options)
+  end
+
+  @doc """
   Creates a `Rule`, which contains the `IPSet` objects, `ByteMatchSet`
   objects, and other predicates that identify the requests that you want to
   block. If you add more than one predicate to a `Rule`, a request must match
@@ -290,6 +362,30 @@ defmodule AWS.WAF do
   end
 
   @doc """
+  Permanently deletes a `RateBasedRule`. You can't delete a rule if it's
+  still used in any `WebACL` objects or if it still includes any predicates,
+  such as `ByteMatchSet` objects.
+
+  If you just want to remove a rule from a `WebACL`, use `UpdateWebACL`.
+
+  To permanently delete a `RateBasedRule` from AWS WAF, perform the following
+  steps:
+
+  <ol> <li> Update the `RateBasedRule` to remove predicates, if any. For more
+  information, see `UpdateRateBasedRule`.
+
+  </li> <li> Use `GetChangeToken` to get the change token that you provide in
+  the `ChangeToken` parameter of a `DeleteRateBasedRule` request.
+
+  </li> <li> Submit a `DeleteRateBasedRule` request.
+
+  </li> </ol>
+  """
+  def delete_rate_based_rule(client, input, options \\ []) do
+    request(client, "DeleteRateBasedRule", input, options)
+  end
+
+  @doc """
   Permanently deletes a `Rule`. You can't delete a `Rule` if it's still used
   in any `WebACL` objects or if it still includes any predicates, such as
   `ByteMatchSet` objects.
@@ -461,6 +557,25 @@ defmodule AWS.WAF do
   end
 
   @doc """
+  Returns the `RateBasedRule` that is specified by the `RuleId` that you
+  included in the `GetRateBasedRule` request.
+  """
+  def get_rate_based_rule(client, input, options \\ []) do
+    request(client, "GetRateBasedRule", input, options)
+  end
+
+  @doc """
+  Returns an array of IP addresses currently being blocked by the
+  `RateBasedRule` that is specified by the `RuleId`. The maximum number of
+  managed keys that will be blocked is 10,000. If more than 10,000 addresses
+  exceed the rate limit, the 10,000 addresses with the highest rates will be
+  blocked.
+  """
+  def get_rate_based_rule_managed_keys(client, input, options \\ []) do
+    request(client, "GetRateBasedRuleManagedKeys", input, options)
+  end
+
+  @doc """
   Returns the `Rule` that is specified by the `RuleId` that you included in
   the `GetRule` request.
   """
@@ -527,6 +642,13 @@ defmodule AWS.WAF do
   """
   def list_i_p_sets(client, input, options \\ []) do
     request(client, "ListIPSets", input, options)
+  end
+
+  @doc """
+  Returns an array of `RuleSummary` objects.
+  """
+  def list_rate_based_rules(client, input, options \\ []) do
+    request(client, "ListRateBasedRules", input, options)
   end
 
   @doc """
@@ -667,6 +789,53 @@ defmodule AWS.WAF do
   """
   def update_i_p_set(client, input, options \\ []) do
     request(client, "UpdateIPSet", input, options)
+  end
+
+  @doc """
+  Inserts or deletes `Predicate` objects in a rule and updates the
+  `RateLimit` in the rule.
+
+  Each `Predicate` object identifies a predicate, such as a `ByteMatchSet` or
+  an `IPSet`, that specifies the web requests that you want to block or
+  count. The `RateLimit` specifies the number of requests every five minutes
+  that triggers the rule.
+
+  If you add more than one predicate to a `RateBasedRule`, a request must
+  match all the predicates and exceed the `RateLimit` to be counted or
+  blocked. For example, suppose you add the following to a `RateBasedRule`:
+
+  <ul> <li> An `IPSet` that matches the IP address `192.0.2.44/32`
+
+  </li> <li> A `ByteMatchSet` that matches `BadBot` in the `User-Agent`
+  header
+
+  </li> </ul> Further, you specify a `RateLimit` of 15,000.
+
+  You then add the `RateBasedRule` to a `WebACL` and specify that you want to
+  block requests that satisfy the rule. For a request to be blocked, it must
+  come from the IP address 192.0.2.44 *and* the `User-Agent` header in the
+  request must contain the value `BadBot`. Further, requests that match these
+  two conditions much be received at a rate of more than 15,000 every five
+  minutes. If the rate drops below this limit, AWS WAF no longer blocks the
+  requests.
+
+  As a second example, suppose you want to limit requests to a particular
+  page on your site. To do this, you could add the following to a
+  `RateBasedRule`:
+
+  <ul> <li> A `ByteMatchSet` with `FieldToMatch` of `URI`
+
+  </li> <li> A `PositionalConstraint` of `STARTS_WITH`
+
+  </li> <li> A `TargetString` of `login`
+
+  </li> </ul> Further, you specify a `RateLimit` of 15,000.
+
+  By adding this `RateBasedRule` to a `WebACL`, you could limit requests to
+  your login page without affecting the rest of your site.
+  """
+  def update_rate_based_rule(client, input, options \\ []) do
+    request(client, "UpdateRateBasedRule", input, options)
   end
 
   @doc """
@@ -853,8 +1022,13 @@ defmodule AWS.WAF do
   want to include in the `WebACL`, to specify the default action, and to
   associate the `WebACL` with a CloudFront distribution.
 
-  </li> </ol> For more information about how to use the AWS WAF API to allow
-  or block HTTP requests, see the [AWS WAF Developer
+  </li> </ol> Be aware that if you try to add a RATE_BASED rule to a web ACL
+  without setting the rule type when first creating the rule, the
+  `UpdateWebACL` request will fail because the request tries to add a REGULAR
+  rule (the default rule type) with the specified ID, which does not exist.
+
+  For more information about how to use the AWS WAF API to allow or block
+  HTTP requests, see the [AWS WAF Developer
   Guide](http://docs.aws.amazon.com/waf/latest/developerguide/).
   """
   def update_web_a_c_l(client, input, options \\ []) do

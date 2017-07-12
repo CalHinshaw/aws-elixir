@@ -11,9 +11,9 @@ defmodule AWS.ServiceCatalog do
   organizations to create and manage catalogs of IT services that are
   approved for use on AWS. This documentation provides reference material for
   the AWS Service Catalog end user API. To get the most out of this
-  documentation, you need to be familiar with the terminology discussed in
-  [AWS Service Catalog
-  Concepts](http://docs.aws.amazon.com/servicecatalog/latest/userguide/what-is_concepts.html).
+  documentation, be familiar with the terminology discussed in [AWS Service
+  Catalog
+  Concepts](http://docs.aws.amazon.com/servicecatalog/latest/adminguide/what-is_concepts.html).
 
   *Additional Resources*
 
@@ -48,7 +48,15 @@ defmodule AWS.ServiceCatalog do
   end
 
   @doc """
-  Creates a new constraint.
+  Associate a TagOption identifier with a resource identifier.
+  """
+  def associate_tag_option_with_resource(client, input, options \\ []) do
+    request(client, "AssociateTagOptionWithResource", input, options)
+  end
+
+  @doc """
+  Creates a new constraint. For more information, see [Using
+  Constraints](http://docs.aws.amazon.com/servicecatalog/latest/adminguide/constraints.html).
   """
   def create_constraint(client, input, options \\ []) do
     request(client, "CreateConstraint", input, options)
@@ -77,10 +85,19 @@ defmodule AWS.ServiceCatalog do
 
   @doc """
   Create a new provisioning artifact for the specified product. This
-  operation will not work with a product that has been shared with you.
+  operation does not work with a product that has been shared with you.
+
+  See the bottom of this topic for an example JSON request.
   """
   def create_provisioning_artifact(client, input, options \\ []) do
     request(client, "CreateProvisioningArtifact", input, options)
+  end
+
+  @doc """
+  Create a new TagOption.
+  """
+  def create_tag_option(client, input, options \\ []) do
+    request(client, "CreateTagOption", input, options)
   end
 
   @doc """
@@ -91,7 +108,7 @@ defmodule AWS.ServiceCatalog do
   end
 
   @doc """
-  Deletes the specified portfolio. This operation will not work with a
+  Deletes the specified portfolio. This operation does not work with a
   portfolio that has been shared with you or if it has products, users,
   constraints, or shared accounts associated with it.
   """
@@ -107,7 +124,7 @@ defmodule AWS.ServiceCatalog do
   end
 
   @doc """
-  Deletes the specified product. This operation will not work with a product
+  Deletes the specified product. This operation does not work with a product
   that has been shared with you or is associated with a portfolio.
   """
   def delete_product(client, input, options \\ []) do
@@ -115,7 +132,7 @@ defmodule AWS.ServiceCatalog do
   end
 
   @doc """
-  Deletes the specified provisioning artifact. This operation will not work
+  Deletes the specified provisioning artifact. This operation does not work
   on a provisioning artifact associated with a product that has been shared
   with you, or on the last provisioning artifact associated with a product (a
   product must have at least one provisioning artifact).
@@ -168,6 +185,13 @@ defmodule AWS.ServiceCatalog do
   end
 
   @doc """
+  Retrieve detailed information about the provisioned product.
+  """
+  def describe_provisioned_product(client, input, options \\ []) do
+    request(client, "DescribeProvisionedProduct", input, options)
+  end
+
+  @doc """
   Retrieves detailed information about the specified provisioning artifact.
   """
   def describe_provisioning_artifact(client, input, options \\ []) do
@@ -179,6 +203,16 @@ defmodule AWS.ServiceCatalog do
   product in a specified manner. Use this operation to obtain the list of
   `ProvisioningArtifactParameters` parameters available to call the
   `ProvisionProduct` operation for the specified product.
+
+  If the output contains a TagOption key with an empty list of values, there
+  is a TagOption conflict for that key. The end user cannot take action to
+  fix the conflict, and launch is not blocked. In subsequent calls to the
+  `ProvisionProduct` operation, do not include conflicted TagOption keys as
+  tags. Calls to `ProvisionProduct` with empty TagOption values cause the
+  error "Parameter validation failed: Missing required parameter in
+  Tags[*N*]:*Value* ". Calls to `ProvisionProduct` with conflicted TagOption
+  keys automatically tag the provisioned product with the conflicted keys
+  with the value "`sc-tagoption-conflict-portfolioId-productId`".
   """
   def describe_provisioning_parameters(client, input, options \\ []) do
     request(client, "DescribeProvisioningParameters", input, options)
@@ -194,6 +228,13 @@ defmodule AWS.ServiceCatalog do
   end
 
   @doc """
+  Describes a TagOption.
+  """
+  def describe_tag_option(client, input, options \\ []) do
+    request(client, "DescribeTagOption", input, options)
+  end
+
+  @doc """
   Disassociates a previously associated principal ARN from a specified
   portfolio.
   """
@@ -206,6 +247,13 @@ defmodule AWS.ServiceCatalog do
   """
   def disassociate_product_from_portfolio(client, input, options \\ []) do
     request(client, "DisassociateProductFromPortfolio", input, options)
+  end
+
+  @doc """
+  Disassociates a TagOption from a resource.
+  """
+  def disassociate_tag_option_from_resource(client, input, options \\ []) do
+    request(client, "DisassociateTagOptionFromResource", input, options)
   end
 
   @doc """
@@ -279,13 +327,33 @@ defmodule AWS.ServiceCatalog do
   end
 
   @doc """
-  Requests a *Provision* of a specified product. A *ProvisionedProduct* is a
+  Lists resources associated with a TagOption.
+  """
+  def list_resources_for_tag_option(client, input, options \\ []) do
+    request(client, "ListResourcesForTagOption", input, options)
+  end
+
+  @doc """
+  Lists detailed TagOptions information.
+  """
+  def list_tag_options(client, input, options \\ []) do
+    request(client, "ListTagOptions", input, options)
+  end
+
+  @doc """
+  Requests a *provision* of a specified product. A *provisioned product* is a
   resourced instance for a product. For example, provisioning a
   CloudFormation-template-backed product results in launching a
   CloudFormation stack and all the underlying resources that come with it.
 
   You can check the status of this request using the `DescribeRecord`
-  operation.
+  operation. The error "Parameter validation failed: Missing required
+  parameter in Tags[*N*]:*Value*" indicates that your request contains a tag
+  which has a tag key but no corresponding tag value (value is empty or
+  null). Your call may have included values returned from a
+  `DescribeProvisioningParameters` call that resulted in a TagOption key with
+  an empty list. This happens when TagOption keys are in conflict. For more
+  information, see `DescribeProvisioningParameters`.
   """
   def provision_product(client, input, options \\ []) do
     request(client, "ProvisionProduct", input, options)
@@ -350,7 +418,7 @@ defmodule AWS.ServiceCatalog do
   end
 
   @doc """
-  Updates the specified portfolio's details. This operation will not work
+  Updates the specified portfolio's details. This operation does not work
   with a product that has been shared with you.
   """
   def update_portfolio(client, input, options \\ []) do
@@ -380,11 +448,18 @@ defmodule AWS.ServiceCatalog do
 
   @doc """
   Updates an existing provisioning artifact's information. This operation
-  will not work on a provisioning artifact associated with a product that has
+  does not work on a provisioning artifact associated with a product that has
   been shared with you.
   """
   def update_provisioning_artifact(client, input, options \\ []) do
     request(client, "UpdateProvisioningArtifact", input, options)
+  end
+
+  @doc """
+  Updates an existing TagOption.
+  """
+  def update_tag_option(client, input, options \\ []) do
+    request(client, "UpdateTagOption", input, options)
   end
 
   @spec request(map(), binary(), map(), list()) ::

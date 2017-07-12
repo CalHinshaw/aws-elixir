@@ -30,6 +30,16 @@ defmodule AWS.AutoScaling do
   EMR](http://docs.aws.amazon.com/ElasticMapReduce/latest/ManagementGuide/emr-automatic-scaling.html)
   in the *Amazon EMR Management Guide*.
 
+  </li> <li> AppStream 2.0 fleets. For more information, see [Fleet Auto
+  Scaling for Amazon AppStream
+  2.0](http://docs.aws.amazon.com/appstream2/latest/developerguide/autoscaling.html)
+  in the *Amazon AppStream 2.0 Developer Guide*.
+
+  </li> <li> Provisioned read and write capacity for Amazon DynamoDB tables
+  and global secondary indexes. For more information, see [Auto Scaling for
+  DynamoDB](http://docs.aws.amazon.com/amazondynamodb/latest/developerguide/TargetTracking.html)
+  in the *Amazon DynamoDB Developer Guide*.
+
   </li> </ul> For a list of supported regions, see [AWS Regions and
   Endpoints: Application Auto
   Scaling](http://docs.aws.amazon.com/general/latest/gr/rande.html#as-app_region)

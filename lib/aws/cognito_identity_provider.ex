@@ -3,12 +3,12 @@
 
 defmodule AWS.Cognito.IdentityProvider do
   @moduledoc """
-  Using the Amazon Cognito Your User Pools API, you can create a user pool to
+  Using the Amazon Cognito User Pools API, you can create a user pool to
   manage directories and users. You can authenticate a user to obtain tokens
   related to user identity and access policies.
 
   This API reference provides information about user pools in Amazon Cognito
-  Your User Pools.
+  User Pools.
 
   For more information, see the Amazon Cognito Documentation.
   """
@@ -42,9 +42,10 @@ defmodule AWS.Cognito.IdentityProvider do
   @doc """
   Creates a new user in the specified user pool and sends a welcome message
   via email or phone (SMS). This message is based on a template that you
-  configured in your call to CreateUserPool or UpdateUserPool. This template
-  includes your custom sign-up instructions and placeholders for user name
-  and temporary password.
+  configured in your call to [CreateUserPool](API_CreateUserPool.html) or
+  [UpdateUserPool](API_UpdateUserPool.html). This template includes your
+  custom sign-up instructions and placeholders for user name and temporary
+  password.
 
   Requires developer credentials.
   """
@@ -204,6 +205,12 @@ defmodule AWS.Cognito.IdentityProvider do
   Updates the specified user's attributes, including developer attributes, as
   an administrator. Works on any user.
 
+  For custom attributes, you must prepend the `custom:` prefix to the
+  attribute name.
+
+  In addition to updating user attributes, this API can also be used to mark
+  phone and email as verified.
+
   Requires developer credentials.
   """
   def admin_update_user_attributes(client, input, options \\ []) do
@@ -227,7 +234,7 @@ defmodule AWS.Cognito.IdentityProvider do
   end
 
   @doc """
-  Confirms tracking of the device. This API call is the call that beings
+  Confirms tracking of the device. This API call is the call that begins
   device tracking.
   """
   def confirm_device(client, input, options \\ []) do
@@ -235,8 +242,7 @@ defmodule AWS.Cognito.IdentityProvider do
   end
 
   @doc """
-  Allows a user to enter a code provided when they reset their password to
-  update their password.
+  Allows a user to enter a confirmation code to reset a forgotten password.
   """
   def confirm_forgot_password(client, input, options \\ []) do
     request(client, "ConfirmForgotPassword", input, options)
@@ -257,6 +263,13 @@ defmodule AWS.Cognito.IdentityProvider do
   """
   def create_group(client, input, options \\ []) do
     request(client, "CreateGroup", input, options)
+  end
+
+  @doc """
+  Creates an identity provider for a user pool.
+  """
+  def create_identity_provider(client, input, options \\ []) do
+    request(client, "CreateIdentityProvider", input, options)
   end
 
   @doc """
@@ -282,12 +295,26 @@ defmodule AWS.Cognito.IdentityProvider do
   end
 
   @doc """
+  Creates a new domain for a user pool.
+  """
+  def create_user_pool_domain(client, input, options \\ []) do
+    request(client, "CreateUserPoolDomain", input, options)
+  end
+
+  @doc """
   Deletes a group. Currently only groups with no members can be deleted.
 
   Requires developer credentials.
   """
   def delete_group(client, input, options \\ []) do
     request(client, "DeleteGroup", input, options)
+  end
+
+  @doc """
+  Deletes an identity provider for a user pool.
+  """
+  def delete_identity_provider(client, input, options \\ []) do
+    request(client, "DeleteIdentityProvider", input, options)
   end
 
   @doc """
@@ -319,6 +346,20 @@ defmodule AWS.Cognito.IdentityProvider do
   end
 
   @doc """
+  Deletes a domain for a user pool.
+  """
+  def delete_user_pool_domain(client, input, options \\ []) do
+    request(client, "DeleteUserPoolDomain", input, options)
+  end
+
+  @doc """
+  Gets information about a specific identity provider.
+  """
+  def describe_identity_provider(client, input, options \\ []) do
+    request(client, "DescribeIdentityProvider", input, options)
+  end
+
+  @doc """
   Describes the user import job.
   """
   def describe_user_import_job(client, input, options \\ []) do
@@ -342,6 +383,13 @@ defmodule AWS.Cognito.IdentityProvider do
   end
 
   @doc """
+  Gets information about a domain.
+  """
+  def describe_user_pool_domain(client, input, options \\ []) do
+    request(client, "DescribeUserPoolDomain", input, options)
+  end
+
+  @doc """
   Forgets the specified device.
   """
   def forget_device(client, input, options \\ []) do
@@ -349,7 +397,15 @@ defmodule AWS.Cognito.IdentityProvider do
   end
 
   @doc """
-  Retrieves the password for the specified client ID or username.
+  Calling this API causes a message to be sent to the end user with a
+  confirmation code that is required to change the user's password. For the
+  `Username` parameter, you can use the username or user alias. If a verified
+  phone number exists for the user, the confirmation code is sent to the
+  phone number. Otherwise, if a verified email exists, the confirmation code
+  is sent to the email. If neither a verified phone number nor a verified
+  email exists, `InvalidParameterException` is thrown. To use the
+  confirmation code for resetting the password, call
+  [ConfirmForgotPassword](API_ConfirmForgotPassword.html).
   """
   def forgot_password(client, input, options \\ []) do
     request(client, "ForgotPassword", input, options)
@@ -377,6 +433,13 @@ defmodule AWS.Cognito.IdentityProvider do
   """
   def get_group(client, input, options \\ []) do
     request(client, "GetGroup", input, options)
+  end
+
+  @doc """
+  Gets the specified identity provider.
+  """
+  def get_identity_provider_by_identifier(client, input, options \\ []) do
+    request(client, "GetIdentityProviderByIdentifier", input, options)
   end
 
   @doc """
@@ -421,6 +484,13 @@ defmodule AWS.Cognito.IdentityProvider do
   """
   def list_groups(client, input, options \\ []) do
     request(client, "ListGroups", input, options)
+  end
+
+  @doc """
+  Lists information about all identity providers for a user pool.
+  """
+  def list_identity_providers(client, input, options \\ []) do
+    request(client, "ListIdentityProviders", input, options)
   end
 
   @doc """
@@ -520,6 +590,13 @@ defmodule AWS.Cognito.IdentityProvider do
   """
   def update_group(client, input, options \\ []) do
     request(client, "UpdateGroup", input, options)
+  end
+
+  @doc """
+  Updates identity provider information for a user pool.
+  """
+  def update_identity_provider(client, input, options \\ []) do
+    request(client, "UpdateIdentityProvider", input, options)
   end
 
   @doc """

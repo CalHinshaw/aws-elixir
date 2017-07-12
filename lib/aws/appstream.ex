@@ -74,7 +74,9 @@ defmodule AWS.AppStream do
   Describes the streaming sessions for a stack and a fleet. If a user ID is
   provided, this operation returns streaming sessions for only that user.
   Pass this value for the `nextToken` parameter in a subsequent call to this
-  operation to retrieve the next set of items.
+  operation to retrieve the next set of items. If an authentication type is
+  not provided, the operation defaults to users authenticated using a
+  streaming URL.
   """
   def describe_sessions(client, input, options \\ []) do
     request(client, "DescribeSessions", input, options)
@@ -134,8 +136,9 @@ defmodule AWS.AppStream do
 
   @doc """
   Updates an existing fleet. All the attributes except the fleet name can be
-  updated in the **STOPPED** state. Only **ComputeCapacity** and
-  **ImageName** can be updated in any other state.
+  updated in the **STOPPED** state. When a fleet is in the **RUNNING** state,
+  only `DisplayName` and `ComputeCapacity` can be updated. A fleet cannot be
+  updated in a status of **STARTING** or **STOPPING**.
   """
   def update_fleet(client, input, options \\ []) do
     request(client, "UpdateFleet", input, options)

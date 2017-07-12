@@ -338,9 +338,9 @@ defmodule AWS.Config do
   function. Specify the ARN for the `SourceIdentifier` key. This key is part
   of the `Source` object, which is part of the `ConfigRule` object.
 
-  If you are adding a new AWS managed Config rule, specify the rule's
-  identifier for the `SourceIdentifier` key. To reference AWS managed Config
-  rule identifiers, see [Using AWS Managed Config
+  If you are adding an AWS managed Config rule, specify the rule's identifier
+  for the `SourceIdentifier` key. To reference AWS managed Config rule
+  identifiers, see [About AWS Managed Config
   Rules](http://docs.aws.amazon.com/config/latest/developerguide/evaluate-config_use-managed-rules.html).
 
   For any new rule that you add, specify the `ConfigRuleName` in the

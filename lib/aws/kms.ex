@@ -306,8 +306,8 @@ defmodule AWS.KMS do
   the plaintext data key from memory.
 
   </li> </ol> To return only an encrypted copy of the data key, use
-  `GenerateDataKeyWithoutPlaintext`. To return an arbitrary unpredictable
-  byte string, use `GenerateRandom`.
+  `GenerateDataKeyWithoutPlaintext`. To return a random byte string that is
+  cryptographically secure, use `GenerateRandom`.
 
   If you use the optional `EncryptionContext` field, you must store at least
   enough information to be able to reconstruct the full encryption context
@@ -344,7 +344,12 @@ defmodule AWS.KMS do
   end
 
   @doc """
-  Generates an unpredictable byte string.
+  Returns a random byte string that is cryptographically secure.
+
+  For more information about entropy and random number generation, see the
+  [AWS Key Management Service Cryptographic
+  Details](https://d0.awsstatic.com/whitepapers/KMS-Cryptographic-Details.pdf)
+  whitepaper.
   """
   def generate_random(client, input, options \\ []) do
     request(client, "GenerateRandom", input, options)

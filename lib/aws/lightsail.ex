@@ -11,12 +11,12 @@ defmodule AWS.Lightsail do
   by using the API or command-line interface (CLI).
 
   For more information about Lightsail concepts and tasks, see the [Lightsail
-  Dev Guide](http://lightsail.aws.amazon.com/ls/docs).
+  Dev Guide](https://lightsail.aws.amazon.com/ls/docs/all).
 
   To use the Lightsail API or the CLI, you will need to use AWS Identity and
   Access Management (IAM) to generate access keys. For details about how to
   set this up, see the [Lightsail Dev
-  Guide](http://lightsail.aws.amazon.com/ls/docs/how-to/articles/lightsail-how-to-set-up-access-keys-to-use-sdk-api-cli).
+  Guide](http://lightsail.aws.amazon.com/ls/docs/how-to/article/lightsail-how-to-set-up-access-keys-to-use-sdk-api-cli).
   """
 
   @doc """
@@ -279,7 +279,9 @@ defmodule AWS.Lightsail do
   end
 
   @doc """
-  Returns a list of all valid regions for Amazon Lightsail.
+  Returns a list of all valid regions for Amazon Lightsail. Use the `include
+  availability zones` parameter to also return the availability zones in a
+  region.
   """
   def get_regions(client, input, options \\ []) do
     request(client, "GetRegions", input, options)
@@ -325,6 +327,14 @@ defmodule AWS.Lightsail do
   """
   def peer_vpc(client, input, options \\ []) do
     request(client, "PeerVpc", input, options)
+  end
+
+  @doc """
+  Sets the specified open ports for an Amazon Lightsail instance, and closes
+  all ports for every protocol not included in the current request.
+  """
+  def put_instance_public_ports(client, input, options \\ []) do
+    request(client, "PutInstancePublicPorts", input, options)
   end
 
   @doc """

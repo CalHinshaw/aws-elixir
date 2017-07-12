@@ -173,7 +173,9 @@ defmodule AWS.CertificateManager do
   request that the mail be resent within 72 hours of requesting the ACM
   Certificate. If more than 72 hours have elapsed since your original request
   or since your last attempt to resend validation mail, you must request a
-  new certificate.
+  new certificate. For more information about setting up your contact email
+  addresses, see [Configure Email for your
+  Domain](http://docs.aws.amazon.com/acm/latest/userguide/setup-email.html).
   """
   def resend_validation_email(client, input, options \\ []) do
     request(client, "ResendValidationEmail", input, options)

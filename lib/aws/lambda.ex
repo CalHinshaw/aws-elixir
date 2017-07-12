@@ -62,7 +62,7 @@ defmodule AWS.Lambda do
   This association between a stream source and a Lambda function is called
   the event source mapping.
 
-  <important>This event source mapping is relevant only in the AWS Lambda
+  <important> This event source mapping is relevant only in the AWS Lambda
   pull model, where AWS Lambda invokes the function. For more information,
   see [AWS Lambda: How it
   Works](http://docs.aws.amazon.com/lambda/latest/dg/lambda-introduction.html)
@@ -252,8 +252,6 @@ defmodule AWS.Lambda do
   information about versioning, see [AWS Lambda Function Versioning and
   Aliases](http://docs.aws.amazon.com/lambda/latest/dg/versioning-aliases.html).
 
-  For information about adding permissions, see `AddPermission`.
-
   You need permission for the `lambda:GetPolicy action.`
   """
   def get_policy(client, function_name, options \\ []) do
@@ -309,7 +307,7 @@ defmodule AWS.Lambda do
   end
 
   @doc """
-  <important>This API is deprecated. We recommend you use `Invoke` API (see
+  <important> This API is deprecated. We recommend you use `Invoke` API (see
   `Invoke`).
 
   </important> Submits an invocation request to AWS Lambda. Upon receiving
@@ -381,6 +379,16 @@ defmodule AWS.Lambda do
   end
 
   @doc """
+  Returns a list of tags assigned to a function when supplied the function
+  ARN (Amazon Resource Name).
+  """
+  def list_tags(client, resource, options \\ []) do
+    url = "/2017-03-31/tags/#{URI.encode(resource)}"
+    headers = []
+    request(client, :get, url, headers, nil, options, nil)
+  end
+
+  @doc """
   List all versions of a function. For information about the versioning
   feature, see [AWS Lambda Function Versioning and
   Aliases](http://docs.aws.amazon.com/lambda/latest/dg/versioning-aliases.html).
@@ -423,6 +431,28 @@ defmodule AWS.Lambda do
   """
   def remove_permission(client, function_name, statement_id, input, options \\ []) do
     url = "/2015-03-31/functions/#{URI.encode(function_name)}/policy/#{URI.encode(statement_id)}"
+    headers = []
+    request(client, :delete, url, headers, input, options, 204)
+  end
+
+  @doc """
+  Creates a list of tags (key-value pairs) on the Lambda function. Requires
+  the Lambda function ARN (Amazon Resource Name). If a key is specified
+  without a value, Lambda creates a tag with the specified key and a value of
+  null.
+  """
+  def tag_resource(client, resource, input, options \\ []) do
+    url = "/2017-03-31/tags/#{URI.encode(resource)}"
+    headers = []
+    request(client, :post, url, headers, input, options, 204)
+  end
+
+  @doc """
+  Removes tags from a Lambda function. Requires the function ARN (Amazon
+  Resource Name).
+  """
+  def untag_resource(client, resource, input, options \\ []) do
+    url = "/2017-03-31/tags/#{URI.encode(resource)}"
     headers = []
     request(client, :delete, url, headers, input, options, 204)
   end

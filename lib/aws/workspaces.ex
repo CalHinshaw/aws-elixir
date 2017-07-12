@@ -95,7 +95,7 @@ defmodule AWS.Workspaces do
   end
 
   @doc """
-  Modifies the WorkSpace properties, including the RunningMode and AutoStop
+  Modifies the WorkSpace properties, including the running mode and AutoStop
   time.
   """
   def modify_workspace_properties(client, input, options \\ []) do
@@ -146,17 +146,16 @@ defmodule AWS.Workspaces do
   end
 
   @doc """
-  Starts the specified WorkSpaces. The API only works with WorkSpaces that
-  have RunningMode configured as AutoStop and the State set to “STOPPED.”
+  Starts the specified WorkSpaces. The WorkSpaces must have a running mode of
+  AutoStop and a state of STOPPED.
   """
   def start_workspaces(client, input, options \\ []) do
     request(client, "StartWorkspaces", input, options)
   end
 
   @doc """
-  Stops the specified WorkSpaces. The API only works with WorkSpaces that
-  have RunningMode configured as AutoStop and the State set to AVAILABLE,
-  IMPAIRED, UNHEALTHY, or ERROR.
+  Stops the specified WorkSpaces. The WorkSpaces must have a running mode of
+  AutoStop and a state of AVAILABLE, IMPAIRED, UNHEALTHY, or ERROR.
   """
   def stop_workspaces(client, input, options \\ []) do
     request(client, "StopWorkspaces", input, options)

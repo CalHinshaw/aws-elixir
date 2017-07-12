@@ -92,6 +92,15 @@ defmodule AWS.APIGateway do
   end
 
   @doc """
+  Creates a `ReqeustValidator` of a given `RestApi`.
+  """
+  def create_request_validator(client, rest_api_id, input, options \\ []) do
+    url = "/restapis/#{URI.encode(rest_api_id)}/requestvalidators"
+    headers = []
+    request(client, :post, url, headers, input, options, 201)
+  end
+
+  @doc """
   Creates a `Resource` resource.
   """
   def create_resource(client, parent_id, rest_api_id, input, options \\ []) do
@@ -255,6 +264,15 @@ defmodule AWS.APIGateway do
   """
   def delete_model(client, model_name, rest_api_id, input, options \\ []) do
     url = "/restapis/#{URI.encode(rest_api_id)}/models/#{URI.encode(model_name)}"
+    headers = []
+    request(client, :delete, url, headers, input, options, 202)
+  end
+
+  @doc """
+  Deletes a `RequestValidator` of a given `RestApi`.
+  """
+  def delete_request_validator(client, request_validator_id, rest_api_id, input, options \\ []) do
+    url = "/restapis/#{URI.encode(rest_api_id)}/requestvalidators/#{URI.encode(request_validator_id)}"
     headers = []
     request(client, :delete, url, headers, input, options, 202)
   end
@@ -575,6 +593,24 @@ defmodule AWS.APIGateway do
   """
   def get_models(client, rest_api_id, options \\ []) do
     url = "/restapis/#{URI.encode(rest_api_id)}/models"
+    headers = []
+    request(client, :get, url, headers, nil, options, nil)
+  end
+
+  @doc """
+  Gets a `RequestValidator` of a given `RestApi`.
+  """
+  def get_request_validator(client, request_validator_id, rest_api_id, options \\ []) do
+    url = "/restapis/#{URI.encode(rest_api_id)}/requestvalidators/#{URI.encode(request_validator_id)}"
+    headers = []
+    request(client, :get, url, headers, nil, options, nil)
+  end
+
+  @doc """
+  Gets the `RequestValidators` collection of a given `RestApi`.
+  """
+  def get_request_validators(client, rest_api_id, options \\ []) do
+    url = "/restapis/#{URI.encode(rest_api_id)}/requestvalidators"
     headers = []
     request(client, :get, url, headers, nil, options, nil)
   end
@@ -942,6 +978,15 @@ defmodule AWS.APIGateway do
   """
   def update_model(client, model_name, rest_api_id, input, options \\ []) do
     url = "/restapis/#{URI.encode(rest_api_id)}/models/#{URI.encode(model_name)}"
+    headers = []
+    request(client, :patch, url, headers, input, options, nil)
+  end
+
+  @doc """
+  Updates a `RequestValidator` of a given `RestApi`.
+  """
+  def update_request_validator(client, request_validator_id, rest_api_id, input, options \\ []) do
+    url = "/restapis/#{URI.encode(rest_api_id)}/requestvalidators/#{URI.encode(request_validator_id)}"
     headers = []
     request(client, :patch, url, headers, input, options, nil)
   end

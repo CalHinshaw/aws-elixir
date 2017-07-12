@@ -259,6 +259,13 @@ defmodule AWS.CodePipeline do
   end
 
   @doc """
+  Gets a summary of the most recent executions for a pipeline.
+  """
+  def list_pipeline_executions(client, input, options \\ []) do
+    request(client, "ListPipelineExecutions", input, options)
+  end
+
+  @doc """
   Gets a summary of all of the pipelines associated with your account.
   """
   def list_pipelines(client, input, options \\ []) do

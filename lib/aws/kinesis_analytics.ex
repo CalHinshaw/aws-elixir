@@ -7,6 +7,16 @@ defmodule AWS.Kinesis.Analytics do
   """
 
   @doc """
+  Adds a CloudWatch log stream to monitor application configuration errors.
+  For more information about using CloudWatch log streams with Amazon Kinesis
+  Analytics applications, see [Monitoring Configuration
+  Errors](http://docs.aws.amazon.com/kinesisanalytics/latest/dev/cloudwatch-monitor-configuration.html).
+  """
+  def add_application_cloud_watch_logging_option(client, input, options \\ []) do
+    request(client, "AddApplicationCloudWatchLoggingOption", input, options)
+  end
+
+  @doc """
   Adds a streaming source to your Amazon Kinesis application. For conceptual
   information, see [Configuring Application
   Input](http://docs.aws.amazon.com/kinesisanalytics/latest/dev/how-it-works-input.html).
@@ -92,8 +102,7 @@ defmodule AWS.Kinesis.Analytics do
   in-application stream, which you can think of as a constantly updating
   table. In the mapping, you must provide a schema for the in-application
   stream and map each data column in the in-application stream to a data
-  element in the streaming source, with the option of renaming, casting and
-  dropping columns as desired.
+  element in the streaming source.
 
   Your application code is one or more SQL statements that read input data,
   transform it, and generate output. Your application code can create one or
@@ -127,6 +136,16 @@ defmodule AWS.Kinesis.Analytics do
   """
   def delete_application(client, input, options \\ []) do
     request(client, "DeleteApplication", input, options)
+  end
+
+  @doc """
+  Deletes a CloudWatch log stream from an application. For more information
+  about using CloudWatch log streams with Amazon Kinesis Analytics
+  applications, see [Monitoring Configuration
+  Errors](http://docs.aws.amazon.com/kinesisanalytics/latest/dev/cloudwatch-monitor-configuration.html).
+  """
+  def delete_application_cloud_watch_logging_option(client, input, options \\ []) do
+    request(client, "DeleteApplicationCloudWatchLoggingOption", input, options)
   end
 
   @doc """
@@ -247,13 +266,14 @@ defmodule AWS.Kinesis.Analytics do
   end
 
   @doc """
-  Updates an existing Kinesis Analytics application. Using this API, you can
-  update application code, input configuration, and output configuration.
+  Updates an existing Amazon Kinesis Analytics application. Using this API,
+  you can update application code, input configuration, and output
+  configuration.
 
-  Note that Kinesis Analytics updates the `CurrentApplicationVersionId` each
-  time you update your application.
+  Note that Amazon Kinesis Analytics updates the
+  `CurrentApplicationVersionId` each time you update your application.
 
-  This opeation requires permission for the
+  This operation requires permission for the
   `kinesisanalytics:UpdateApplication` action.
   """
   def update_application(client, input, options \\ []) do

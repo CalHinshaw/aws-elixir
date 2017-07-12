@@ -79,7 +79,11 @@ defmodule AWS.IoT do
   Creates an X.509 certificate using the specified certificate signing
   request.
 
-  **Note** Reusing the same certificate signing request (CSR) results in a
+  **Note:** The CSR must include a public key that is either an RSA key with
+  a length of at least 2048 bits or an ECC key from NIST P-256 or NIST P-384
+  curves.
+
+  **Note:** Reusing the same certificate signing request (CSR) results in a
   distinct certificate.
 
   You can create multiple certificates in a batch by creating a directory,
@@ -577,11 +581,10 @@ defmodule AWS.IoT do
   Registers a CA certificate with AWS IoT. This CA certificate can then be
   used to sign device certificates, which can be then registered with AWS
   IoT. You can register up to 10 CA certificates per AWS account that have
-  the same subject field and public key. This enables you to have up to 10
-  certificate authorities sign your device certificates. If you have more
-  than one CA certificate registered, make sure you pass the CA certificate
-  when you register your device certificates with the RegisterCertificate
-  API.
+  the same subject field. This enables you to have up to 10 certificate
+  authorities sign your device certificates. If you have more than one CA
+  certificate registered, make sure you pass the CA certificate when you
+  register your device certificates with the RegisterCertificate API.
   """
   def register_c_a_certificate(client, input, options \\ []) do
     url = "/cacertificate"

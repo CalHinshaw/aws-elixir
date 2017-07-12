@@ -353,7 +353,9 @@ defmodule AWS.Logs do
   subscription filter, for same-account delivery.
 
   </li> </ul> There can only be one subscription filter associated with a log
-  group.
+  group. If you are updating an existing filter, you must specify the correct
+  name in `filterName`. Otherwise, the call will fail because you cannot
+  associate a second filter with a log group.
   """
   def put_subscription_filter(client, input, options \\ []) do
     request(client, "PutSubscriptionFilter", input, options)

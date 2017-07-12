@@ -3,34 +3,37 @@
 
 defmodule AWS.SSM do
   @moduledoc """
+  Amazon EC2 Systems Manager
+
   Amazon EC2 Systems Manager is a collection of capabilities that helps you
   automate management tasks such as collecting system inventory, applying
   operating system (OS) patches, automating the creation of Amazon Machine
   Images (AMIs), and configuring operating systems (OSs) and applications at
-  scale. Systems Manager works with managed instances: Amazon EC2 instances
-  and servers or virtual machines (VMs) in your on-premises environment that
-  are configured for Systems Manager.
+  scale. Systems Manager lets you remotely and securely manage the
+  configuration of your managed instances. A *managed instance* is any Amazon
+  EC2 instance or on-premises machine in your hybrid environment that has
+  been configured for Systems Manager.
 
-  This references is intended to be used with the EC2 Systems Manager User
-  Guide
-  ([Linux](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/systems-manager.html))
-  ([Windows](http://docs.aws.amazon.com/AWSEC2/latest/WindowsGuide/systems-manager.html)).
+  This reference is intended to be used with the [Amazon EC2 Systems Manager
+  User Guide](http://docs.aws.amazon.com/systems-manager/latest/userguide/).
 
-  To get started, verify prerequisites and configure managed instances
-  ([Linux](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/systems-manager-prereqs.html))
-  ([Windows](http://docs.aws.amazon.com/AWSEC2/latest/WindowsGuide/systems-manager-prereqs.html)).
+  To get started, verify prerequisites and configure managed instances. For
+  more information, see [Systems Manager
+  Prerequisites](http://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-setting-up.html).
   """
 
   @doc """
   Adds or overwrites one or more tags for the specified resource. Tags are
-  metadata that you assign to your managed instances. Tags enable you to
-  categorize your managed instances in different ways, for example, by
-  purpose, owner, or environment. Each tag consists of a key and an optional
-  value, both of which you define. For example, you could define a set of
-  tags for your account's managed instances that helps you track each
-  instance's owner and stack level. For example: Key=Owner and Value=DbAdmin,
-  SysAdmin, or Dev. Or Key=Stack and Value=Production, Pre-Production, or
-  Test. Each resource can have a maximum of 10 tags.
+  metadata that you assign to your managed instances, Maintenance Windows, or
+  Parameter Store parameters. Tags enable you to categorize your resources in
+  different ways, for example, by purpose, owner, or environment. Each tag
+  consists of a key and an optional value, both of which you define. For
+  example, you could define a set of tags for your account's managed
+  instances that helps you track each instance's owner and stack level. For
+  example: Key=Owner and Value=DbAdmin, SysAdmin, or Dev. Or Key=Stack and
+  Value=Production, Pre-Production, or Test.
+
+  Each resource can have a maximum of 10 tags.
 
   We recommend that you devise a set of tag keys that meets your needs for
   each resource type. Using a consistent set of tag keys makes it easier for
@@ -40,7 +43,7 @@ defmodule AWS.SSM do
 
   For more information about tags, see [Tagging Your Amazon EC2
   Resources](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Using_Tags.html)
-  in the Amazon EC2 User Guide.
+  in the *Amazon EC2 User Guide*.
   """
   def add_tags_to_resource(client, input, options \\ []) do
     request(client, "AddTagsToResource", input, options)
@@ -60,23 +63,20 @@ defmodule AWS.SSM do
   that you can manage these resources using Run Command. An on-premises
   server or virtual machine that has been registered with EC2 is called a
   managed instance. For more information about activations, see [Setting Up
-  Managed Instances
-  (Linux)](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/managed-instances.html)
-  or [Setting Up Managed Instances
-  (Windows)](http://docs.aws.amazon.com/AWSEC2/latest/WindowsGuide/managed-instances.html)
-  in the Amazon EC2 User Guide.
+  Systems Manager in Hybrid
+  Environments](http://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-managedinstances.html).
   """
   def create_activation(client, input, options \\ []) do
     request(client, "CreateActivation", input, options)
   end
 
   @doc """
-  Associates the specified SSM document with the specified instances or
-  targets.
+  Associates the specified Systems Manager document with the specified
+  instances or targets.
 
-  When you associate an SSM document with one or more instances using
-  instance IDs or tags, the SSM agent running on the instance processes the
-  document and configures the instance as specified.
+  When you associate a document with one or more instances using instance IDs
+  or tags, the SSM Agent running on the instance processes the document and
+  configures the instance as specified.
 
   If you associate a document with an instance that already has an associated
   document, the system throws the AssociationAlreadyExists exception.
@@ -86,12 +86,12 @@ defmodule AWS.SSM do
   end
 
   @doc """
-  Associates the specified SSM document with the specified instances or
-  targets.
+  Associates the specified Systems Manager document with the specified
+  instances or targets.
 
-  When you associate an SSM document with one or more instances using
-  instance IDs or tags, the SSM agent running on the instance processes the
-  document and configures the instance as specified.
+  When you associate a document with one or more instances using instance IDs
+  or tags, the SSM Agent running on the instance processes the document and
+  configures the instance as specified.
 
   If you associate a document with an instance that already has an associated
   document, the system throws the AssociationAlreadyExists exception.
@@ -101,10 +101,10 @@ defmodule AWS.SSM do
   end
 
   @doc """
-  Creates an SSM document.
+  Creates a Systems Manager document.
 
-  After you create an SSM document, you can use CreateAssociation to
-  associate it with one or more running instances.
+  After you create a document, you can use CreateAssociation to associate it
+  with one or more running instances.
   """
   def create_document(client, input, options \\ []) do
     request(client, "CreateDocument", input, options)
@@ -125,6 +125,25 @@ defmodule AWS.SSM do
   end
 
   @doc """
+  Creates a resource data sync configuration to a single bucket in Amazon S3.
+  This is an asynchronous operation that returns immediately. After a
+  successful initial sync is completed, the system continuously syncs data to
+  the Amazon S3 bucket. To check the status of the sync, use the
+  [ListResourceDataSync](API_ListResourceDataSync.html) operation.
+
+  By default, data is not encrypted in Amazon S3. We strongly recommend that
+  you enable encryption in Amazon S3 to ensure secure data storage. We also
+  recommend that you secure access to the Amazon S3 bucket by creating a
+  restrictive bucket policy. To view an example of a restrictive Amazon S3
+  bucket policy for Resource Data Sync, see [Configuring Resource Data Sync
+  for
+  Inventory](http://docs.aws.amazon.com/systems-manager/latest/userguide/sysman-inventory-configuring.html#sysman-inventory-datasync).
+  """
+  def create_resource_data_sync(client, input, options \\ []) do
+    request(client, "CreateResourceDataSync", input, options)
+  end
+
+  @doc """
   Deletes an activation. You are not required to delete an activation. If you
   delete an activation, you can no longer use it to register additional
   managed instances. Deleting an activation does not de-register managed
@@ -135,10 +154,11 @@ defmodule AWS.SSM do
   end
 
   @doc """
-  Disassociates the specified SSM document from the specified instance.
+  Disassociates the specified Systems Manager document from the specified
+  instance.
 
-  When you disassociate an SSM document from an instance, it does not change
-  the configuration of the instance. To change the configuration state of an
+  When you disassociate a document from an instance, it does not change the
+  configuration of the instance. To change the configuration state of an
   instance after you disassociate a document, you must create a new document
   with the desired configuration and associate it with the instance.
   """
@@ -147,10 +167,11 @@ defmodule AWS.SSM do
   end
 
   @doc """
-  Deletes the SSM document and all instance associations to the document.
+  Deletes the Systems Manager document and all instance associations to the
+  document.
 
-  Before you delete the SSM document, we recommend that you use
-  DeleteAssociation to disassociate all instances that are associated with
+  Before you delete the document, we recommend that you use
+  `DeleteAssociation` to disassociate all instances that are associated with
   the document.
   """
   def delete_document(client, input, options \\ []) do
@@ -172,6 +193,13 @@ defmodule AWS.SSM do
   end
 
   @doc """
+  Delete a list of parameters.
+  """
+  def delete_parameters(client, input, options \\ []) do
+    request(client, "DeleteParameters", input, options)
+  end
+
+  @doc """
   Deletes a patch baseline.
   """
   def delete_patch_baseline(client, input, options \\ []) do
@@ -179,9 +207,19 @@ defmodule AWS.SSM do
   end
 
   @doc """
+  Deletes a Resource Data Sync configuration. After the configuration is
+  deleted, changes to inventory data on managed instances are no longer
+  synced with the target Amazon S3 bucket. Deleting a sync configuration does
+  not delete data in the target Amazon S3 bucket.
+  """
+  def delete_resource_data_sync(client, input, options \\ []) do
+    request(client, "DeleteResourceDataSync", input, options)
+  end
+
+  @doc """
   Removes the server or virtual machine from the list of registered servers.
-  You can reregister the instance again at any time. If you don’t plan to use
-  Run Command on the server, we suggest uninstalling the SSM agent first.
+  You can reregister the instance again at any time. If you don't plan to use
+  Run Command on the server, we suggest uninstalling the SSM Agent first.
   """
   def deregister_managed_instance(client, input, options \\ []) do
     request(client, "DeregisterManagedInstance", input, options)
@@ -218,7 +256,8 @@ defmodule AWS.SSM do
   end
 
   @doc """
-  Describes the associations for the specified SSM document or instance.
+  Describes the associations for the specified Systems Manager document or
+  instance.
   """
   def describe_association(client, input, options \\ []) do
     request(client, "DescribeAssociation", input, options)
@@ -246,9 +285,10 @@ defmodule AWS.SSM do
   end
 
   @doc """
-  Describes the permissions for an SSM document. If you created the document,
-  you are the owner. If a document is shared, it can either be shared
-  privately (by specifying a user’s AWS account ID) or publicly (*All*).
+  Describes the permissions for a Systems Manager document. If you created
+  the document, you are the owner. If a document is shared, it can either be
+  shared privately (by specifying a user's AWS account ID) or publicly
+  (*All*).
   """
   def describe_document_permission(client, input, options \\ []) do
     request(client, "DescribeDocumentPermission", input, options)
@@ -263,7 +303,8 @@ defmodule AWS.SSM do
 
   @doc """
   Retrieves the current effective patches (the patch and the approval state)
-  for the specified patch baseline.
+  for the specified patch baseline. Note that this API applies only to
+  Windows patch baselines.
   """
   def describe_effective_patches_for_patch_baseline(client, input, options \\ []) do
     request(client, "DescribeEffectivePatchesForPatchBaseline", input, options)
@@ -279,7 +320,7 @@ defmodule AWS.SSM do
   @doc """
   Describes one or more of your instances. You can use this to get
   information about instances like the operating system platform, the SSM
-  agent version (Linux), status etc. If you specify one or more instance IDs,
+  Agent version (Linux), status etc. If you specify one or more instance IDs,
   it returns information for those instances. If you do not specify instance
   IDs, it returns information for all your instances. If you specify an
   instance ID that is not valid or an instance that you do not own, you
@@ -402,7 +443,9 @@ defmodule AWS.SSM do
   end
 
   @doc """
-  Retrieves the default patch baseline.
+  Retrieves the default patch baseline. Note that Systems Manager supports
+  creating multiple default patch baselines. For example, you can create a
+  default patch baseline for each operating system.
   """
   def get_default_patch_baseline(client, input, options \\ []) do
     request(client, "GetDefaultPatchBaseline", input, options)
@@ -410,7 +453,7 @@ defmodule AWS.SSM do
 
   @doc """
   Retrieves the current snapshot for the patch baseline the instance uses.
-  This API is primarily used by the AWS-ApplyPatchBaseline Systems Manager
+  This API is primarily used by the AWS-RunPatchBaseline Systems Manager
   document.
   """
   def get_deployable_patch_snapshot_for_instance(client, input, options \\ []) do
@@ -463,6 +506,13 @@ defmodule AWS.SSM do
   end
 
   @doc """
+  Get information about a parameter by using the parameter name.
+  """
+  def get_parameter(client, input, options \\ []) do
+    request(client, "GetParameter", input, options)
+  end
+
+  @doc """
   Query a list of all parameters used by the AWS account.
   """
   def get_parameter_history(client, input, options \\ []) do
@@ -470,10 +520,19 @@ defmodule AWS.SSM do
   end
 
   @doc """
-  Get a list of parameters used by the AWS account.&gt;
+  Get details of a parameter.
   """
   def get_parameters(client, input, options \\ []) do
     request(client, "GetParameters", input, options)
+  end
+
+  @doc """
+  Retrieve parameters in a specific hierarchy. For more information, see
+  [Working with Systems Manager
+  Parameters](http://docs.aws.amazon.com/systems-manager/latest/userguide/sysman-paramstore-working.html).
+  """
+  def get_parameters_by_path(client, input, options \\ []) do
+    request(client, "GetParametersByPath", input, options)
   end
 
   @doc """
@@ -492,7 +551,8 @@ defmodule AWS.SSM do
   end
 
   @doc """
-  Lists the associations for the specified SSM document or instance.
+  Lists the associations for the specified Systems Manager document or
+  instance.
   """
   def list_associations(client, input, options \\ []) do
     request(client, "ListAssociations", input, options)
@@ -538,6 +598,23 @@ defmodule AWS.SSM do
   end
 
   @doc """
+  Lists your resource data sync configurations. Includes information about
+  the last time a sync attempted to start, the last sync status, and the last
+  time a sync successfully completed.
+
+  The number of sync configurations might be too large to return using a
+  single call to `ListResourceDataSync`. You can limit the number of sync
+  configurations returned by using the `MaxResults` parameter. To determine
+  whether there are more sync configurations to list, check the value of
+  `NextToken` in the output. If there are more sync configurations to list,
+  you can request them by specifying the `NextToken` returned in the call to
+  the parameter of a subsequent call.
+  """
+  def list_resource_data_sync(client, input, options \\ []) do
+    request(client, "ListResourceDataSync", input, options)
+  end
+
+  @doc """
   Returns a list of the tags assigned to the specified resource.
   """
   def list_tags_for_resource(client, input, options \\ []) do
@@ -545,10 +622,10 @@ defmodule AWS.SSM do
   end
 
   @doc """
-  Share a document publicly or privately. If you share a document privately,
-  you must specify the AWS user account IDs for those people who can use the
-  document. If you share a document publicly, you must specify *All* as the
-  account ID.
+  Shares a Systems Manager document publicly or privately. If you share a
+  document privately, you must specify the AWS user account IDs for those
+  people who can use the document. If you share a document publicly, you must
+  specify *All* as the account ID.
   """
   def modify_document_permission(client, input, options \\ []) do
     request(client, "ModifyDocumentPermission", input, options)
@@ -564,7 +641,7 @@ defmodule AWS.SSM do
   end
 
   @doc """
-  Add one or more paramaters to the system.
+  Add one or more parameters to the system.
   """
   def put_parameter(client, input, options \\ []) do
     request(client, "PutParameter", input, options)
@@ -606,7 +683,7 @@ defmodule AWS.SSM do
   end
 
   @doc """
-  Executes commands on one or more remote instances.
+  Executes commands on one or more managed instances.
   """
   def send_command(client, input, options \\ []) do
     request(client, "SendCommand", input, options)
@@ -635,8 +712,8 @@ defmodule AWS.SSM do
   end
 
   @doc """
-  Updates the status of the SSM document associated with the specified
-  instance.
+  Updates the status of the Systems Manager document associated with the
+  specified instance.
   """
   def update_association_status(client, input, options \\ []) do
     request(client, "UpdateAssociationStatus", input, options)

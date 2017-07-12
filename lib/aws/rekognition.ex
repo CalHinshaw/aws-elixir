@@ -11,27 +11,34 @@ defmodule AWS.Rekognition do
   *target* input image.
 
   <note> If the source image contains multiple faces, the service detects the
-  largest face and uses it to compare with each face detected in the target
-  image.
+  largest face and compares it with each face detected in the target image.
 
   </note> In response, the operation returns an array of face matches ordered
-  by similarity score with the highest similarity scores first. For each face
-  match, the response provides a bounding box of the face and `confidence`
-  value (indicating the level of confidence that the bounding box contains a
-  face). The response also provides a `similarity` score, which indicates how
-  closely the faces match.
+  by similarity score in descending order. For each face match, the response
+  provides a bounding box of the face, facial landmarks, pose details (pitch,
+  role, and yaw), quality (brightness and sharpness), and confidence value
+  (indicating the level of confidence that the bounding box contains a face).
+  The response also provides a similarity score, which indicates how closely
+  the faces match.
 
-  <note> By default, only faces with the similarity score of greater than or
-  equal to 80% are returned in the response. You can change this value.
+  <note> By default, only faces with a similarity score of greater than or
+  equal to 80% are returned in the response. You can change this value by
+  specifying the `SimilarityThreshold` parameter.
 
-  </note> In addition to the face matches, the response returns information
+  </note> `CompareFaces` also returns an array of faces that don't match the
+  source image. For each face, it returns a bounding box, confidence value,
+  landmarks, pose details, and quality. The response also returns information
   about the face in the source image, including the bounding box of the face
   and confidence value.
 
-  <note> This is a stateless API operation. That is, the operation does not
-  persist any data.
+  If the image doesn't contain Exif metadata, `CompareFaces` returns
+  orientation information for the source and target images. Use these values
+  to display the images with the correct image orientation.
 
-  </note> For an example, see `get-started-exercise-compare-faces`
+  <note> This is a stateless API operation. That is, data returned by this
+  operation doesn't persist.
+
+  </note> For an example, see `get-started-exercise-compare-faces`.
 
   This operation requires permissions to perform the
   `rekognition:CompareFaces` action.
@@ -49,7 +56,9 @@ defmodule AWS.Rekognition do
   persist results in a specific collection. Then, a user can search the
   collection for faces in the user-specific container.
 
-  For an example, see `example1`.
+  <note> Collection names are case-sensitive.
+
+  </note> For an example, see `example1`.
 
   This operation requires permissions to perform the
   `rekognition:CreateCollection` action.
@@ -159,6 +168,33 @@ defmodule AWS.Rekognition do
   end
 
   @doc """
+  Detects explicit or suggestive adult content in a specified JPEG or PNG
+  format image. Use `DetectModerationLabels` to moderate images depending on
+  your requirements. For example, you might want to filter images that
+  contain nudity, but not images containing suggestive content.
+
+  To filter images, use the labels returned by `DetectModerationLabels` to
+  determine which types of content are appropriate. For information about
+  moderation labels, see `image-moderation`.
+  """
+  def detect_moderation_labels(client, input, options \\ []) do
+    request(client, "DetectModerationLabels", input, options)
+  end
+
+  @doc """
+  Gets the name and additional information about a celebrity based on his or
+  her Rekognition ID. The additional information is returned as an array of
+  URLs. If there is no additional information about the celebrity, this list
+  is empty. For more information, see `celebrity-recognition`.
+
+  This operation requires permissions to perform the
+  `rekognition:GetCelebrityInfo` action.
+  """
+  def get_celebrity_info(client, input, options \\ []) do
+    request(client, "GetCelebrityInfo", input, options)
+  end
+
+  @doc """
   Detects faces in the input image and adds them to the specified collection.
 
   Amazon Rekognition does not save the actual faces detected. Instead, the
@@ -178,7 +214,7 @@ defmodule AWS.Rekognition do
   faces. This includes, the bounding box of the detected face, confidence
   value (indicating the bounding box contains a face), a face ID assigned by
   the service for each face that is detected and stored, and an image ID
-  assigned by the service for the input image If you request all facial
+  assigned by the service for the input image. If you request all facial
   attributes (using the `detectionAttributes` parameter, Amazon Rekognition
   returns detailed facial attributes such as facial landmarks (for example,
   location of eye and mount) and other facial attributes such gender. If you
@@ -220,6 +256,38 @@ defmodule AWS.Rekognition do
   """
   def list_faces(client, input, options \\ []) do
     request(client, "ListFaces", input, options)
+  end
+
+  @doc """
+  Returns an array of celebrities recognized in the input image. The image is
+  passed either as base64-encoded image bytes or as a reference to an image
+  in an Amazon S3 bucket. The image must be either a PNG or JPEG formatted
+  file. For more information, see `celebrity-recognition`.
+
+  `RecognizeCelebrities` returns the 15 largest faces in the image. It lists
+  recognized celebrities in the `CelebrityFaces` list and unrecognized faces
+  in the `UnrecognizedFaces` list. The operation doesn't return celebrities
+  whose face sizes are smaller than the largest 15 faces in the image.
+
+  For each celebrity recognized, the API returns a `Celebrity` object. The
+  `Celebrity` object contains the celebrity name, ID, URL links to additional
+  information, match confidence, and a `ComparedFace` object that you can use
+  to locate the celebrity's face on the image.
+
+  Rekognition does not retain information about which images a celebrity has
+  been recognized in. Your application must store this information and use
+  the `Celebrity` ID property as a unique identifier for the celebrity. If
+  you don't store the celebrity name or additional information URLs returned
+  by `RecognizeCelebrities`, you will need the ID to identify the celebrity
+  in a call to the operation.
+
+  For an example, see `recognize-celebrities-tutorial`.
+
+  This operation requires permissions to perform the
+  `rekognition:RecognizeCelebrities` operation.
+  """
+  def recognize_celebrities(client, input, options \\ []) do
+    request(client, "RecognizeCelebrities", input, options)
   end
 
   @doc """

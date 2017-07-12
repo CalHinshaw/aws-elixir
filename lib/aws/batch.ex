@@ -38,7 +38,7 @@ defmodule AWS.Batch do
 
   @doc """
   Creates an AWS Batch compute environment. You can create `MANAGED` or
-  `UNMANAGED`compute environments.
+  `UNMANAGED` compute environments.
 
   In a managed compute environment, AWS Batch manages the compute resources
   within the environment, based on the compute resources that you specify.

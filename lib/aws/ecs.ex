@@ -51,24 +51,26 @@ defmodule AWS.ECS do
   service's tasks that must remain in the `RUNNING` state during a
   deployment, as a percentage of the `desiredCount` (rounded up to the
   nearest integer). This parameter enables you to deploy without using
-  additional cluster capacity. For example, if `desiredCount` is four tasks
-  and the minimum is 50%, the scheduler can stop two existing tasks to free
-  up cluster capacity before starting two new tasks. Tasks for services that
-  do not use a load balancer are considered healthy if they are in the
-  `RUNNING` state. Tasks for services that use a load balancer are considered
-  healthy if they are in the `RUNNING` state and the container instance they
-  are hosted on is reported as healthy by the load balancer. The default
-  value is 50% in the console and 100% for the AWS CLI, the AWS SDKs, and the
-  APIs.
+  additional cluster capacity. For example, if your service has a
+  `desiredCount` of four tasks and a `minimumHealthyPercent` of 50%, the
+  scheduler can stop two existing tasks to free up cluster capacity before
+  starting two new tasks. Tasks for services that *do not* use a load
+  balancer are considered healthy if they are in the `RUNNING` state. Tasks
+  for services that *do* use a load balancer are considered healthy if they
+  are in the `RUNNING` state and the container instance they are hosted on is
+  reported as healthy by the load balancer. The default value for
+  `minimumHealthyPercent` is 50% in the console and 100% for the AWS CLI, the
+  AWS SDKs, and the APIs.
 
   The `maximumPercent` parameter represents an upper limit on the number of
   your service's tasks that are allowed in the `RUNNING` or `PENDING` state
   during a deployment, as a percentage of the `desiredCount` (rounded down to
   the nearest integer). This parameter enables you to define the deployment
-  batch size. For example, if `desiredCount` is four tasks and the maximum is
-  200%, the scheduler can start four new tasks before stopping the four older
-  tasks (provided that the cluster resources required to do this are
-  available). The default value is 200%.
+  batch size. For example, if your service has a `desiredCount` of four tasks
+  and a `maximumPercent` value of 200%, the scheduler can start four new
+  tasks before stopping the four older tasks (provided that the cluster
+  resources required to do this are available). The default value for
+  `maximumPercent` is 200%.
 
   When the service scheduler launches new tasks, it determines task placement
   in your cluster using the following logic:
@@ -79,7 +81,7 @@ defmodule AWS.ECS do
 
   </li> <li> By default, the service scheduler attempts to balance tasks
   across Availability Zones in this manner (although you can choose a
-  different placement strategy):
+  different placement strategy) with the `placementStrategy` parameter):
 
   <ul> <li> Sort the valid container instances by the fewest number of
   running tasks for this service in the same Availability Zone as the
@@ -175,6 +177,13 @@ defmodule AWS.ECS do
   `INACTIVE` task definition (although there may be up to a 10 minute window
   following deregistration where these restrictions have not yet taken
   effect).
+
+  <note> At this time, `INACTIVE` task definitions remain discoverable in
+  your account indefinitely; however, this behavior is subject to change in
+  the future, so you should not rely on `INACTIVE` task definitions
+  persisting beyond the life cycle of any associated tasks and services.
+
+  </note>
   """
   def deregister_task_definition(client, input, options \\ []) do
     request(client, "DeregisterTaskDefinition", input, options)
@@ -238,11 +247,12 @@ defmodule AWS.ECS do
   @doc """
   Lists the attributes for Amazon ECS resources within a specified target
   type and cluster. When you specify a target type and cluster,
-  `LisAttributes` returns a list of attribute objects, one for each attribute
-  on each resource. You can filter the list of results to a single attribute
-  name to only return results that have that name. You can also filter the
-  results by attribute name and value, for example, to see which container
-  instances in a cluster are running a Linux AMI (`ecs.os-type=linux`).
+  `ListAttributes` returns a list of attribute objects, one for each
+  attribute on each resource. You can filter the list of results to a single
+  attribute name to only return results that have that name. You can also
+  filter the results by attribute name and value, for example, to see which
+  container instances in a cluster are running a Linux AMI
+  (`ecs.os-type=linux`).
   """
   def list_attributes(client, input, options \\ []) do
     request(client, "ListAttributes", input, options)
@@ -393,9 +403,18 @@ defmodule AWS.ECS do
 
   When `StopTask` is called on a task, the equivalent of `docker stop` is
   issued to the containers running in the task. This results in a `SIGTERM`
-  and a 30-second timeout, after which `SIGKILL` is sent and the containers
-  are forcibly stopped. If the container handles the `SIGTERM` gracefully and
-  exits within 30 seconds from receiving it, no `SIGKILL` is sent.
+  and a default 30-second timeout, after which `SIGKILL` is sent and the
+  containers are forcibly stopped. If the container handles the `SIGTERM`
+  gracefully and exits within 30 seconds from receiving it, no `SIGKILL` is
+  sent.
+
+  <note> The default 30-second timeout can be configured on the Amazon ECS
+  container agent with the `ECS_CONTAINER_STOP_TIMEOUT` variable. For more
+  information, see [Amazon ECS Container Agent
+  Configuration](http://docs.aws.amazon.com/AmazonECS/latest/developerguide/ecs-agent-config.html)
+  in the *Amazon EC2 Container Service Developer Guide*.
+
+  </note>
   """
   def stop_task(client, input, options \\ []) do
     request(client, "StopTask", input, options)
